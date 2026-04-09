@@ -1,1 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文章详情</title>
+    <style>
+        body { margin: 20px; background: #f2f2f7; font-family: -apple-system, sans-serif; }
+        #article-content {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            word-break: break-word;
+            margin-bottom: 30px;
+        }
+        .giscus { margin-top: 30px; }
+    </style>
+</head>
+<body>
+    <a href="./index.html">← 返回首页</a>
+    <h1 id="article-title"></h1>
+    <div id="article-content"></div>
 
+    <!-- Giscus 评论组件 -->
+    <div class="giscus">
+        <script src="https://giscus.app/client.js"
+            data-repo="Tang-Yu-Chao/ArticleWeb"
+            data-repo-id="你的仓库ID"
+            data-category="Announcements"
+            data-category-id="你的分类ID"
+            data-mapping="pathname"
+            data-strict="0"
+            data-reactions-enabled="1"
+            data-emit-metadata="0"
+            data-input-position="top"
+            data-theme="light"
+            data-lang="zh-CN"
+            crossorigin="anonymous"
+            async>
+        </script>
+    </div>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const slug = params.get('slug');
+        if (!slug) {
+            document.body.innerHTML = '<h2>缺少文章标识</h2>';
+            throw new Error('No slug');
+        }
+
+        async function loadArticle() {
+            try {
+                const res = await fetch(`./articles/${slug}.json`);
+                const article = await res.json();
+                document.getElementById('article-title').innerText = article.title;
+                document.getElementById('article-content').innerText = article.content;
+            } catch (e) {
+                document.getElementById('article-content').innerText = '加载文章失败: ' + e.message;
+            }
+        }
+        loadArticle();
+    </script>
+</body>
+</html>
